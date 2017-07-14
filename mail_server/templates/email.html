@@ -1,0 +1,45 @@
+ <head>
+     <meta charset="utf-8">
+     <meta http-equiv="X-UA-Compatible" content="IE=edge">
+     <meta name="viewport" content="width=device-width, initial-scale=1">
+     <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these       tags -->
+     <title>
+     Infants Lab
+     </title>
+     <!-- TO DO: Rewrite -->
+	 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+	      <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
+     <link rel="icon" 
+         type="image/png" 
+         href="/static/assets/img/favicon.png">
+    <link href="/static/assets/css/general.css" rel="stylesheet">    
+ 	
+     <script src="/static/assets/js/vendor/jquery.min.js"></script>
+     <script src="/static/assets/js/ga.js"></script>
+	 
+ </head>
+ <div class="container-fluid passage" style="margin:5px">
+ </div>
+<div class="container-fluid passage" style="margin:35px">
+     <form method="post" action="{% url 'send_email' %}" class='form-group'>
+         {% csrf_token %}
+          <div style="margin-top:10px; margin-bottom:10px;">
+                {{ form.email.label_tag }}
+                {{ form.email }}
+          </div>
+          <div style="margin-top:10px; margin-bottom:10px;">
+                {{ form.subject.label_tag }}
+                {{ form.subject }}
+           </div>
+           <div style="margin-top:10px; margin-bottom:10px;">
+                 {{ form.content.label_tag }}
+                 {{ form.content }}
+            </div>
+            <div style="margin-top:10px; margin-bottom:10px; color: red;">
+                  {{ message }}
+             </div>
+ 
+        <input type="submit" value="Send" class="btn btn-default"/>
+    </form>
+</div>
+
