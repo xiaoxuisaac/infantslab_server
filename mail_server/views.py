@@ -46,9 +46,8 @@ def update(request):
     pass
     
 def email_from_template(data_web, content_only = False):
-	subject = 'A New Study for [name of kid] from UChicago Center for Early Childhood Research'
-    
-    data = {}
+    subject = "A New Study for [name of kid] from UChicago Center for Early Childhood Research"    
+    data = {'test':'test'}
     try: 
         data['email'] = data_web["Email"]
     except: 
@@ -95,7 +94,7 @@ def email_from_template(data_web, content_only = False):
     subject = subject.repalce('[name of kid]', data['child_firs_name'])
     
     #replace '[parent's name]'
-    if data['parent1_first_name'] != ''
+    if data['parent1_first_name'] != '':
         data['parent_first_name'] = data['parent1_first_name']
     elif data['parent2_first_name'] != '':
         data['parent_first_name'] = data['parent2_first_name']
