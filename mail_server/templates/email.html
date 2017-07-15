@@ -143,6 +143,7 @@
        */
 
 	  function sendEmail(){
+		  sendEmailSettings();
 		  sendMessage(
 		      {
 		        'To': $('#compose-to').val(),
@@ -151,7 +152,6 @@
 		      $('#compose-message').val(),
 		      AddLabel
 		    );
-			sendEmailSettings();
 	  }
 	  
 	  function sendMessage(headers_obj, message, callback)
@@ -178,11 +178,18 @@
 	  }
 	  
 	  function sendEmailSettings(){
+		  
 		  var labels = []
-		  $("#field-label").find('li').each(function(){
+		  $("#field-label").find('.select2-selection__choice').each(function(){
 			  labels.push($(this).attr("title"));
 		  });
+		  
+		  var template = $("#select2-template-select-container").attr("title"));
+		  data = {"labels":labels, "template":template}};
+   	   	  chrome.runtime.sendMessage({"message": "save_email_setting", "content": data);
+		  
 	  }
+	  
 	  function update(){
           gapi.client.gmail.users.labels.list({
             'userId': 'me'
