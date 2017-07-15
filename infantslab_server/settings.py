@@ -26,7 +26,7 @@ SECRET_KEY = 'tp13yt0p5v+xma)eyy%gr(v_p!91ooss98_h5aoif16*v$8nx6'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = []
 
 
 # Application definition
@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'mail_server',
+    'django_select2',
 ]
 
 MIDDLEWARE = [
@@ -77,11 +78,13 @@ WSGI_APPLICATION = 'infantslab_server.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
-    }
+        'ENGINE' : 'django.db.backends.mysql',
+        'NAME' : 'infantslab',
+        'USER' : 'academe',
+        'PASSWORD' : 'AcadeMezouqi',
+    },
+#    'OPTIONS': { 'init_command': 'SET storage_engine=INNODB, character_set_connection=utf8mb4,collation_connection=utf8mb4_bin' },
 }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/1.11/ref/settings/#auth-password-validators
@@ -131,4 +134,7 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/1.11/howto/static-files/
 
 STATIC_URL = '/static/'
-STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, 'static/')
+]
+
