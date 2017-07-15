@@ -17,8 +17,10 @@ def gen_email(request):
             template_form = TemplateForm(request.POST)
             return render(request,'email.html',{'form':form,'template_form': template_form})
         except:
-            raise Http404
-    raise Http404
+            pass
+    form = EmailForm()
+    template_form = TemplateForm()
+    return render(request,'email.html',{'form':form,'template_form': template_form})
     
 def send_email(request):
     if request.method == 'POST':
