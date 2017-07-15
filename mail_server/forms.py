@@ -55,4 +55,5 @@ class EmailForm(forms.Form):
                     widget=forms.Textarea(attrs={'class':'form-control text-name', 'id' : "compose-message"}))
     label = forms.CharField(label=_("Labels"), widget = LabelTagWidget(attrs={'class':'form-control input-sm','data-placeholder':'Add Labels', 'id':'label-select'}))
     
+    template = forms.CharField(label=_("Template"), widget = TemplateWidget(attrs={'class':'form-control', 'id':'template-select'}))
     
