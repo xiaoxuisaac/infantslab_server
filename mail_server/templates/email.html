@@ -135,61 +135,7 @@
         gapi.auth2.getAuthInstance().signOut();
       }
 
-      /**
-       * Append a pre element to the body containing the given message
-       * as its text node. Used to display the results of the API call.
-       *
-       * @param {string} message Text to be placed in pre element.
-       */
-
-	  function sendEmail(){
-		  sendEmailSettings();
-		  sendMessage(
-		      {
-		        'To': $('#compose-to').val(),
-		        'Subject': $('#compose-subject').val()
-		      },
-		      $('#compose-message').val(),
-		      AddLabel
-		    );
-	  }
-	  
-	  function sendMessage(headers_obj, message, callback)
-	  {
-	    var email = '';
-
-	    for(var header in headers_obj)
-	      email += header += ": "+headers_obj[header]+"\r\n";
-
-	    email += "\r\n" + message;
-
-	    var sendRequest = gapi.client.gmail.users.messages.send({
-	      'userId': 'me',
-	      'resource': {
-	        'raw': window.btoa(email).replace(/\+/g, '-').replace(/\//g, '_')
-	      }
-	    });
-
-	    return sendRequest.execute(callback);
-	  }
-	  
-	  function AddLabel(sent_email){
-		  console.log(sent_email);
-	  }
-	  
-	  function sendEmailSettings(){
-		  
-		  var labels = []
-		  $("#field-label").find('.select2-selection__choice').each(function(){
-			  labels.push($(this).attr("title"));
-		  });
-		  
-		  var template = $("#select2-template-select-container").attr("title");
-		  data = {"labels":labels, "template":template}
-   	   	  chrome.runtime.sendMessage({"message": "save_email_setting", "content": data});
-	  	
-	  };
-		  
+      
 	  
 	  function update(){
           gapi.client.gmail.users.labels.list({
