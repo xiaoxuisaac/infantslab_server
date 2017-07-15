@@ -49,26 +49,40 @@ def email_from_template(data_web, content_only = False):
 	subject = 'A New Study for [name of kid] from UChicago Center for Early Childhood Research';
     
     data = {}
-    try: data['email'] = data_web["Email"]
-    except: data['email'] = ''
+    try: 
+        data['email'] = data_web["Email"]
+    except: 
+        data['email'] = ''
     
-    try: data['child_firs_name'] = data_web['child_name'].split(" ")[0].strip()
-    except: data['child_firs_name'] = '[name of kid]'
+    try: 
+        data['child_firs_name'] = data_web['child_name'].split(" ")[0].strip()
+    except: 
+        data['child_firs_name'] = '[name of kid]'
     
-    try: data['parent1_first_name'] = data_web['Parent 1'][0]
-    except: data['parent1_first_name'] = ''
+    try: 
+        data['parent1_first_name'] = data_web['Parent 1'][0]
+    except: 
+        data['parent1_first_name'] = ''
     
-    try: data['parent2_first_name'] =data_web['Parent 1'][0]
-    except: data['parent2_first_name'] = ''
+    try: 
+        data['parent2_first_name'] =data_web['Parent 1'][0]
+    except: 
+        data['parent2_first_name'] = ''
     
-    try: data['template'] = data_web["template"]
-    except: data['template'] = ''
+    try: 
+        data['template'] = data_web["template"]
+    except: 
+        data['template'] = ''
     
-    try: data['labels'] = data_web["labels"]
-    except: data['labels'] = []
+    try: 
+        data['labels'] = data_web["labels"]
+    except: 
+        data['labels'] = []
     
-    try: data['researcher'] = data_web["researcher"]
-    except: data['researcher'] = []
+    try: 
+        data['researcher'] = data_web["researcher"]
+    except: 
+        data['researcher'] = []
             
     template = Template.filter(name = data['tempalte'])
     if template.count() > 0:
