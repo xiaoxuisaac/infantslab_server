@@ -184,7 +184,7 @@
 			  labels.push($(this).attr("title"));
 		  });
 		  
-		  var template = $("#select2-template-select-container").attr("title"));
+		  var template = $("#select2-template-select-container").attr("title");
 		  data = {"labels":labels, "template":template}};
    	   	  chrome.runtime.sendMessage({"message": "save_email_setting", "content": data);
 		  
