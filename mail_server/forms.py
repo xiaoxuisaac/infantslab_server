@@ -43,7 +43,7 @@ class TemplateForm(forms.ModelForm):
                  'name': _('Template'),
                  }
         widgets = {
-                'name': TemplateWidget(attrs={'class':'form-control'})
+                'name': TemplateWidget(attrs={'class':'form-control', 'id':'template-select'})
                 }
                 
 class EmailForm(forms.Form):
@@ -53,6 +53,6 @@ class EmailForm(forms.Form):
                     widget=forms.TextInput(attrs={'class':'form-control text-name', 'id' : "compose-subject"}))
     content = forms.CharField(label=_("Content"),
                     widget=forms.Textarea(attrs={'class':'form-control text-name', 'id' : "compose-message"}))
-    label = forms.CharField(label=_("Labels"), widget = LabelTagWidget(attrs={'class':'form-control input-sm','data-placeholder':'Add Labels'}))
+    label = forms.CharField(label=_("Labels"), widget = LabelTagWidget(attrs={'class':'form-control input-sm','data-placeholder':'Add Labels', 'id':'label-select'}))
     
     
