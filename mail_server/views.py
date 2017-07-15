@@ -46,7 +46,7 @@ def update(request):
     pass
     
 def email_from_template(data_web, content_only = False):
-	subject = 'A New Study for [name of kid] from UChicago Center for Early Childhood Research';
+	subject = 'A New Study for [name of kid] from UChicago Center for Early Childhood Research'
     
     data = {}
     try: 
