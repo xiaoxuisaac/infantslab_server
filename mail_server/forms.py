@@ -10,7 +10,7 @@ from django_select2.forms import (
      
 
     
-class LabelTagWidget(Select2MultipleWidget):
+class LabelTagWidget(Select2Widget):
      model = Label
      queryset = Label.objects.all()
      search_fields = [
