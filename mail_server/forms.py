@@ -10,7 +10,7 @@ from django_select2.forms import (
      
 
     
-class LabelTagWidget(Select2Widget):
+class LabelTagWidget(ModelSelect2Widget):
      model = Label
      queryset = Label.objects.all()
      search_fields = [
@@ -29,7 +29,7 @@ class LabelForm(forms.ModelForm):
                 'name':LabelTagWidget(attrs={'class':'form-control input-sm','data-placeholder':'Add Labels'}),
                 }   
                 
-class TemplateWidget(Select2Widget):
+class TemplateWidget(ModelSelect2Widget):
       model=Template
       search_fields = [
            'name',
