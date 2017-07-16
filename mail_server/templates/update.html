@@ -1,0 +1,335 @@
+ <head>
+     <meta charset="utf-8">
+     <meta http-equiv="X-UA-Compatible" content="IE=edge">
+     <meta name="viewport" content="width=device-width, initial-scale=1">
+     <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these       tags -->
+     <title>
+     Infants Lab | Update Template and Labels from Gmail
+     </title>
+     <!-- TO DO: Rewrite -->
+	 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+	      <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
+     <link rel="icon" 
+         type="image/png" 
+         href="/static/assets/img/favicon.png">
+    <link href="/static/assets/css/general.css" rel="stylesheet">    
+ 	<link href="//cdnjs.cloudflare.com/ajax/libs/select2/4.0.3/css/select2.min.css" type="text/css" media="screen" rel="stylesheet">
+     <script src="/static/assets/js/vendor/jquery.min.js"></script>
+     <script src="/static/assets/js/ga.js"></script>
+ </head>
+ <body>
+ <div class="container-fluid passage" style="margin:5px">
+ </div>
+<div class="container-fluid passage" style="margin:35px">
+	<h4>Update Template and Labels from Gmail</h4>
+        <input type="button" value="Sign In" id="authorize-button"  style="display: none;" class="btn btn-default"/>
+        <input type="button" value="Sign Out" id="signout-button"  style="display: inline-block;" class="btn btn-default"/>
+    <div id = "success_message" style="margin-top:10px; margin-bottom:10px; color: green;">
+     </div>
+      <div id = "error_message" style="margin-top:10px; margin-bottom:10px; color: red;">
+            {{ message }}
+       </div>
+</div>
+
+    <script type="text/javascript">
+		var GMAIL_USER_ID = 116874060231880081383;
+		var TEMPLATE_LABEL_ID = 'Label_1133611563713264447'
+      // Client ID and API key from the Developer Console
+      var CLIENT_ID = '874612665261-0f77qd1ovc8g8d19hfjtl525u8jadgbr.apps.googleusercontent.com';
+      // Array of API discovery doc URLs for APIs used by the quickstart
+      var DISCOVERY_DOCS = ["https://www.googleapis.com/discovery/v1/apis/gmail/v1/rest"];
+
+      // Authorization scopes required by the API; multiple scopes can be
+      // included, separated by spaces.
+      var SCOPES = 'https://mail.google.com/';
+
+      var authorizeButton = document.getElementById('authorize-button');
+      var signoutButton = document.getElementById('signout-button');
+	  	  
+      /**
+       *  On load, called to load the auth2 library and API client library.
+       */
+      function handleClientLoad() {
+        gapi.load('client:auth2', initClient);
+      }
+
+      /**
+       *  Initializes the API client library and sets up sign-in state
+       *  listeners.
+       */
+      function initClient() {
+        gapi.client.init({
+          discoveryDocs: DISCOVERY_DOCS,
+          clientId: CLIENT_ID,
+          scope: SCOPES
+        }).then(function () {
+          // Listen for sign-in state changes.
+			gapi.auth2.getAuthInstance().currentUser.listen(checkUser);
+          // Handle the initial sign-in state.
+            authorizeButton.onclick = handleAuthClick;
+            signoutButton.onclick = handleSignoutClick;
+            checkUser();
+
+        });
+      }
+
+      /**
+       *  Called when the signed in status changes, to update the UI
+       *  appropriately. After a sign-in, the API is called.
+       */
+	  
+	  function checkUser(googleUser) {
+		  isSignedIn = false;
+		  if(gapi.auth2.getAuthInstance().isSignedIn.get()){
+			  userid = gapi.auth2.getAuthInstance().currentUser.get().getId();
+			  console.log(userid);
+			  if(userid == GMAIL_USER_ID){
+				  isSignedIn = true;
+			  }
+		  }
+		  
+		  if(isSignedIn != true){
+			  try{
+			  	authorizeButton.click();
+		  		}
+				catch(err){
+	  				$('#error_message').html(err);
+					
+				}
+		  }
+		  updateSigninStatus(isSignedIn);
+	  }
+	  
+      function updateSigninStatus(googleUser) {
+        if (isSignedIn) {
+          authorizeButton.style.display = 'none';
+          signoutButton.style.display = 'inline-block';
+		  update();
+        } else {
+          authorizeButton.style.display = 'inline-block';
+          signoutButton.style.display = 'none';
+        }
+      }
+
+      /**
+       *  Sign in the user upon button click.
+       */
+      function handleAuthClick(event) {
+		  options = new gapi.auth2.SigninOptionsBuilder();
+		  options.setPrompt('select_account');
+		  gapi.auth2.getAuthInstance().signIn(options);;
+      }
+
+      /**
+       *  Sign out the user upon button click.
+       */
+      function handleSignoutClick(event) {
+        gapi.auth2.getAuthInstance().signOut();
+      }
+
+      function sendMessage(headers_obj, message, callback)
+      {
+        var email = '';
+
+        for(var header in headers_obj)
+          email += header += ": "+headers_obj[header]+"\r\n";
+
+        email += "\r\n" + message;
+
+        var sendRequest = gapi.client.gmail.users.messages.send({
+          'userId': 'me',
+          'resource': {
+            'raw': window.btoa(email).replace(/\+/g, '-').replace(/\//g, '_')
+          }
+        });
+
+        return sendRequest.execute(callback);
+      }
+	  
+	  
+	  function update(){
+          gapi.client.gmail.users.labels.list({
+            'userId': 'me'
+          }).then(function(response) {
+	          var labels = response.result.labels;
+			  var form_label = document.createElement("form");
+			  form_label.setAttribute("method", "post");
+			  form_label.setAttribute("action", "/email/update_labels/");
+			  var labels_info = document.createElement("input");
+			  labels_info.setAttribute("type", "hidden");
+		      labels_info.setAttribute("name", "labels");
+		      labels_info.setAttribute("value", JSON.stringify(labels));
+		      form_label.appendChild(labels_info);
+			  
+			  var fd = new FormData(form_label);
+    	  	  var csrf = $('[name="csrfmiddlewaretoken"]').val();
+    	      $.ajax({
+    	  			headers: { "X-CSRFToken": csrf },
+    	              url: '/email/update_labels/',
+    	              type: 'POST',
+    	              success: function(data, status){
+						  html = $('#success_message').html();
+    					  $('#success_message').html(html + "<p>Labels Updated Successfully</p>");
+    	              },
+    	  			error: function (jqXHR, exception) {
+    	  				console.log('error');
+    	  				$('#error_message').html("error happened");
+    	  			},
+  				  data:fd,
+    	              cache: false,
+    	              contentType: false,
+    	              processData: false
+    	          });
+          });
+		  
+		  
+          gapi.client.gmail.users.threads.list({
+			  'userId': 'me', 'labelIds': TEMPLATE_LABEL_ID
+          }).then(function(response) {
+	          var templates = response.result.threads;
+			  for(i = 0;i < templates.length; i++){
+				  updateSingleTemplate_thread(templates[i].id);
+			  }
+			  
+			  
+			  var form_template = document.createElement("form");
+			  form_template.setAttribute("method", "post");
+			  form_template.setAttribute("action", "/email/delete_old_templates/");
+			  var templates_info = document.createElement("input");
+			  templates_info.setAttribute("type", "hidden");
+		      templates_info.setAttribute("name", "templates");
+		      templates_info.setAttribute("value", JSON.stringify(templates));
+		      form_template.appendChild(templates_info);
+			  
+			  var fd = new FormData(form_template);
+    	  	  var csrf = $('[name="csrfmiddlewaretoken"]').val();
+    	      $.ajax({
+    	  			headers: { "X-CSRFToken": csrf },
+    	              url: '/email/delete_old_templates/',
+    	              type: 'POST',
+    	              success: function(data, status){
+						  html = $('#success_message').html();
+    					  $('#success_message').html(html + "<p>Templates Updated Successfully</p>");
+    	              },
+    	  			error: function (jqXHR, exception) {
+    	  				console.log('error');
+    	  				$('#error_message').html("error happened");
+    	  			},
+  				  data:fd,
+    	              cache: false,
+    	              contentType: false,
+    	              processData: false
+    	          });
+          });
+		
+	  }
+	  
+	  function updateSingleTemplate_thread(threadId) {
+	    var request = gapi.client.gmail.users.threads.get({
+	      'userId': 'me',
+	      'id': threadId
+	    });
+	    request.execute(function(thread){
+	    	messageId = thread.messages[thread.messages.length - 1].id;
+			updateSingleTemplate(messageId);
+	    });
+	  }
+	  
+	  
+	  function updateSingleTemplate(messageId) {
+	    var request = gapi.client.gmail.users.messages.get({
+	      'userId': "me",
+	      'id': messageId
+	    });
+	    request.execute(function(message){
+	    	var body = getBody(message.payload);
+			var headers = message.result.payload.headers;
+			var subject = '';
+			for(i=0; i<headers.length;i++){
+				if(headers[i].name == "Subject"){
+					subject = headers[i].value;
+				}
+			}
+			var thread_id = message.threadId;
+			
+  		  var form_template = document.createElement("form");
+  		  form_template.setAttribute("method", "post");
+  		  form_template.setAttribute("action", "/email/add_template/");
+		  
+  		  var content = document.createElement("input");
+  		  content.setAttribute("type", "hidden");
+  	      content.setAttribute("name", "content");
+  	      content.setAttribute("value", body);
+  	      form_template.appendChild(content);
+		  
+  		  var subject_input = document.createElement("input");
+  		  subject_input.setAttribute("type", "hidden");
+  	      subject_input.setAttribute("name", "subject");
+  	      subject_input.setAttribute("value", subject);
+  	      form_template.appendChild(subject_input);
+		  
+  		  var id_input = document.createElement("input");
+  		  id_input.setAttribute("type", "hidden");
+  	      id_input.setAttribute("name", "thread_id");
+  	      id_input.setAttribute("value", thread_id);
+  	      form_template.appendChild(id_input);
+		  
+  		  var fd = new FormData(form_template);
+    	  var csrf = $('[name="csrfmiddlewaretoken"]').val();
+    	  $.ajax({
+    	  			headers: { "X-CSRFToken": csrf },
+    	            url: '/email/add_template/',
+    	            type: 'POST',
+    	            success: function(data, status){
+						  
+    	              },
+    	  			error: function (jqXHR, exception) {
+    	  				console.log('error');
+    	  				$('#error_message').html("error happened");
+    	  			},
+  				  	data:fd,
+    	            cache: false,
+    	            contentType: false,
+    	            processData: false
+    	          });
+	    });
+	  }
+	  function getBody(message) {
+	         var encodedBody = '';
+	         if(typeof message.parts === 'undefined')
+	         {
+	           encodedBody = message.body.data;
+	         }
+	         else
+	         {
+	           encodedBody = getHTMLPart(message.parts);
+	         }
+	         encodedBody = encodedBody.replace(/-/g, '+').replace(/_/g, '/').replace(/\s/g, '');
+	         return decodeURIComponent(escape(window.atob(encodedBody)));
+	       }
+		   
+		   function getHTMLPart(arr) {
+		          for(var x = 0; x <= arr.length; x++)
+		          {
+		            if(typeof arr[x].parts === 'undefined')
+		            {
+		              if(arr[x].mimeType === 'text/plain')
+		              {
+		                return arr[x].body.data;
+		              }
+		            }
+		            else
+		            {
+		              return getHTMLPart(arr[x].parts);
+		            }
+		          }
+		          return '';
+		        }
+    </script>
+
+    <script async defer src="https://apis.google.com/js/api.js"
+      onload="this.onload=function(){};handleClientLoad()"
+      onreadystatechange="if (this.readyState === 'complete') this.onload()">
+    </script>
+</body>
+

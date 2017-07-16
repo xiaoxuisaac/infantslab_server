@@ -2,6 +2,8 @@ from django.contrib.auth.models import User
 from django.utils.translation import ugettext_lazy as _
 from .models import *
 from django import forms
+from django.utils.encoding import force_text
+
 from django_select2.forms import (
      HeavySelect2MultipleWidget, HeavySelect2Widget, ModelSelect2MultipleWidget,
      ModelSelect2TagWidget, ModelSelect2Widget, Select2MultipleWidget,
@@ -17,7 +19,6 @@ class LabelTagWidget(ModelSelect2MultipleWidget):
          'name',
      ]
          
-      
 class LabelForm(forms.ModelForm):
     class Meta:
         model = Label
@@ -29,6 +30,9 @@ class LabelForm(forms.ModelForm):
                 'name':LabelTagWidget(attrs={'class':'form-control input-sm','data-placeholder':'Add Labels'}),
                 }   
                 
+class LabelUpdateForm(forms.Form):
+    labels = forms.CharField(required=False,label="Text Name",max_length=100000,widget=forms.TextInput(attrs={'class':'form-control text-name'}))
+    
 class TemplateWidget(ModelSelect2Widget):
       model=Template
       search_fields = [
@@ -46,14 +50,31 @@ class TemplateForm(forms.ModelForm):
                 'name': TemplateWidget(attrs={'class':'form-control', 'id':'template-select'})
                 }
                 
-class EmailForm(forms.Form):
-    email = forms.CharField(label=_("Recipient"),
-                    widget=forms.TextInput(attrs={'type':'email', 'class':'form-control text-name', 'id' : "compose-to"}))
-    subject = forms.CharField(label=_("Subject"),
-                    widget=forms.TextInput(attrs={'class':'form-control text-name', 'id' : "compose-subject"}))
-    content = forms.CharField(label=_("Content"),
-                    widget=forms.Textarea(attrs={'class':'form-control text-name', 'id' : "compose-message"}))
-    label = forms.CharField(label=_("Labels"), widget = LabelTagWidget(attrs={'class':'form-control input-sm','data-placeholder':'Add Labels', 'id':'label-select'}))
+class EmailForm(forms.ModelForm):
+    class Meta:
+             model = Email
+             fields = ['email','subject','content','labels','template','family_data']
     
-    template = forms.CharField(label=_("Template"), widget = TemplateWidget(attrs={'class':'form-control', 'id':'template-select'}))
+             labels = {'email': _('Recipient'),
+                'subject': _('Subject'),
+                'content': _('Conetent'),
+                'labels': _('Labels'),
+                'template': _('Template')
+                }
+            
+             widgets = {'email': forms.TextInput(attrs={'type':'email', 'class':'form-control text-name', 'id' : "compose-to"}),
+                    'subject': forms.TextInput(attrs={'class':'form-control text-name', 'id' : "compose-subject"}),
+                    'content': forms.Textarea(attrs={'class':'form-control text-name', 'id' : "compose-message"}),
+                    'labels': LabelTagWidget(attrs={'class':'form-control input-sm','data-placeholder':'Add Labels', 'id':'label-select'}),
+                    'template': TemplateWidget(attrs={'class':'form-control', 'id':'template-select'}),
+                    'family_data': forms.TextInput(attrs={'class':'form-control text-name', 'id' : "compose-subject", 'style':'display:none;'}),
+                    
+                    }
+            
+class NewTemplateForm(forms.Form):
+    subject = forms.CharField(required=False,label="Subject",max_length=500,widget=forms.TextInput(attrs={'class':'form-control text-name'}))
+    content = forms.CharField(required=False,label="Text Name",max_length=1000000,widget=forms.TextInput(attrs={'class':'form-control text-name'}))
+    thread_id = forms.CharField(required=False,label="Subject",max_length=500,widget=forms.TextInput(attrs={'class':'form-control text-name'}))
     
+class AllTemplatesForm(forms.Form):
+    templates = forms.CharField(required=False,label="Text Name",max_length=1000000,widget=forms.TextInput(attrs={'class':'form-control text-name'}))
