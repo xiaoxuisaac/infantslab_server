@@ -3,6 +3,7 @@ from django.utils.translation import ugettext_lazy as _
 from .models import *
 from django import forms
 from django.utils.encoding import force_text
+from tinymce.widgets import TinyMCE
 
 from django_select2.forms import (
      HeavySelect2MultipleWidget, HeavySelect2Widget, ModelSelect2MultipleWidget,
@@ -64,13 +65,18 @@ class EmailForm(forms.ModelForm):
             
              widgets = {'email': forms.TextInput(attrs={'type':'email', 'class':'form-control text-name', 'id' : "compose-to"}),
                     'subject': forms.TextInput(attrs={'class':'form-control text-name', 'id' : "compose-subject"}),
-                    'content': forms.Textarea(attrs={'class':'form-control text-name', 'id' : "compose-message"}),
+                    'content': TinyMCE(attrs={'class':'form-control text-name', 'cols':100, 'rows':20}),
                     'labels': LabelTagWidget(attrs={'class':'form-control input-sm','data-placeholder':'Add Labels', 'id':'label-select'}),
                     'template': TemplateWidget(attrs={'class':'form-control', 'id':'template-select'}),
                     'family_data': forms.TextInput(attrs={'class':'form-control text-name', 'id' : "compose-subject", 'style':'display:none;'}),
                     
                     }
-            
+                    
+class EmailSettingForm(forms.ModelForm):
+    class Meta:
+             model = Email
+             fields = ['labels','template','family_data']
+    
 class NewTemplateForm(forms.Form):
     subject = forms.CharField(required=False,label="Subject",max_length=500,widget=forms.TextInput(attrs={'class':'form-control text-name'}))
     content = forms.CharField(required=False,label="Text Name",max_length=1000000,widget=forms.TextInput(attrs={'class':'form-control text-name'}))

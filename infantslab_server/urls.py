@@ -22,4 +22,6 @@ urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'^email/', include('mail_server.urls')),
     url(r'^select2/', include('django_select2.urls')),
+    url(r'^tinymce/', include('tinymce.urls')),
+    
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT) 

@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'mail_server',
     'django_select2',
+     'tinymce',
 ]
 
 MIDDLEWARE = [
@@ -143,3 +144,15 @@ try:
     SELECT2_CACHE_BACKEND = email_settings.SELECT2_CACHE_BACKEND
 except:
     pass
+    
+TINYMCE_JS_URL = os.path.join(STATIC_URL, "assets/js/tinymce/tinymce.min.js")
+#TINYMCE_JS_URL = "https://cloud.tinymce.com/stable/tinymce.min.js"
+    
+TINYMCE_JS_ROOT = os.path.join(BASE_DIR, "static/assets/js/tinymce")
+
+TINYMCE_DEFAULT_CONFIG = {
+    'plugins': "table,paste,searchreplace",
+    'theme': "modern",
+    'cleanup_on_startup': True,
+    'custom_undo_redo_levels': 10,
+}

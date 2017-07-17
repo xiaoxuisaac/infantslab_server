@@ -4,7 +4,7 @@ from __future__ import unicode_literals
 from django.shortcuts import render
 from django.http import HttpResponse, Http404, HttpResponseRedirect
 from django.views.decorators.csrf import csrf_exempt
-from forms import EmailForm, LabelForm, TemplateForm, LabelUpdateForm, NewTemplateForm, AllTemplatesForm
+from forms import EmailForm, LabelForm, TemplateForm, LabelUpdateForm, NewTemplateForm, AllTemplatesForm, EmailSettingForm
 from django.core.mail import send_mail
 from models import *
 import json
@@ -15,7 +15,8 @@ IGNORE_LABELS = ['CATEGORY_FORUMS', 'CATEGORY_PERSONAL', 'UNREAD', 'UNREAD',
 'SPAM', 'DRAFT', 'CATEGORY_PROMOTIONS', 'TRASH', 'INBOX', 'SENT', 'CHAT',
 'CATEGORY_UPDATES', 'IMPORTANT','CATEGORY_SOCIAL']
 
-PARENT_NAME = ['[Parent name]','[parent name]', '[Parent\'s name]', '[parent\'s name]']
+PARENT_NAME = ['[Parent name]','[parent name]', '[Parent\'s name]', '[parent\'s name]', '[parent&#39;s name]']
+
 # Create your views here.
 @csrf_exempt
 def gen_email(request):
@@ -153,7 +154,7 @@ def email_from_template(data_web, content_only = False):
 
 def update_content_from_template(request):
     if request.method == 'POST':
-        form = EmailForm(request.POST)
+        form = EmailSettingForm(request.POST)
         if form.is_valid():
             data = form.cleaned_data
         else:
@@ -180,7 +181,7 @@ def update_content_from_template(request):
     
 def get_label_id(request):
     if request.method == 'POST':
-        form = EmailForm(request.POST)
+        form = EmailSettingForm(request.POST)
         if form.is_valid():
             data = form.cleaned_data
         else:
@@ -208,13 +209,16 @@ def add_template(request):
             raise Http404
         subject = data['subject']
         content = data['content']
-        content = re.sub(r'(\n\s*)+(\n\s*)+\n+', '\n\n\n', content)
-        content = content.replace("\n\n\n", "[NEW_LINE_HERE]")
-        content = re.sub(r'\n\s*', '', content)
-        content = content.replace("[NEW_LINE_HERE]", "\n\n")
+        #content = re.sub(r'(\n\s*)+(\n\s*)+\n+', '\n\n\n', content)
+        #content = content.replace("\n\n\n", "[NEW_LINE_HERE]")
+        #content = re.sub(r'\n\s*', '', content)
+        #content = content.replace("[NEW_LINE_HERE]", "\n\n")
+        content = content.split('<div class="gmail_quote">')[0]
+        
         thread_id = data['thread_id']
         template, created= Template.objects.get_or_create(thread_id = thread_id)
-        template.name = subject
+        if created:
+            template.name = subject
         template.content = content
         template.save()
         return HttpResponse('template added')

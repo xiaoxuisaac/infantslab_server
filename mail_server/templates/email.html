@@ -16,20 +16,22 @@
  	<link href="//cdnjs.cloudflare.com/ajax/libs/select2/4.0.3/css/select2.min.css" type="text/css" media="screen" rel="stylesheet">
      <script src="/static/assets/js/vendor/jquery.min.js"></script>
      <script src="/static/assets/js/ga.js"></script>
+     <!--script src="/static/assets/js/tinymce/tinymce.min.js"></script-->	 
 	 {{ form.media.js }}
+     <script type="text/javascript" src='/static/assets/js/tinymce/custom.js' ></script>
+	 
  </head>
  <body>
  <div class="container-fluid passage" style="margin:5px">
  </div>
 <div class="container-fluid passage" style="margin:35px">
-	<h4>Send Email</h4>
      <form method="post" class='form-group'>
          {% csrf_token %}
 		 {% for field in form %}
 		 {% if field.name != 'family_data' %}
           <div style="margin-top:10px; margin-bottom:10px;" id = 'field-{{field.name}}'>
                 {{ field.label_tag }}
-                {{ field |safe}}
+                {{ field}}
           </div>
 		  {% else %}
           <div style="display:none;" id = 'field-{{field.name}}'>
@@ -42,6 +44,7 @@
         <input type="button" value="Send"  id="send-button"  style="display: inline-block;" class="btn btn-default"/>
         <input type="button" value="Sign In" id="authorize-button"  style="display: none;" class="btn btn-default"/>
         <input type="button" value="Sign Out" id="signout-button"  style="display: inline-block;" class="btn btn-default"/>
+        <input type="button" value="Sign Out" id="success-close-button"  style="display: none;" class="btn btn-default"/>
     </form>
     <div id = "success_message" style="margin-top:10px; margin-bottom:10px; color: green;">
      </div>
@@ -163,8 +166,12 @@
       }
    
       function AddLabel(sent_email){
+		$('#success_message').html("<p>Email Sent Successfully</p>");
 		  if(sent_email.hasOwnProperty('threadId')){
 			  update_label_id(sent_email.threadId);
+			  var closeButton = $('#success-close-button');
+			  closeButton.click();
+			  
 		  }
 		  else{
 		  	$('#error_message').html(sent_email.message);
@@ -172,13 +179,16 @@
       }
    
       function sendEmail(){
+	   	var editor = tinymce.get('id_content');
+	   	content = editor.getContent();
 		  try {
 	          sendMessage(
 	              {
 	                'To': $('#compose-to').val(),
-	                'Subject': $('#compose-subject').val()
+	                'Subject': $('#compose-subject').val(),
+					 'Content-Type' : 'text/html; charset=UTF-8'
 	              },
-	              $('#compose-message').val(),
+	             content,
 	              AddLabel
 	            );
 		  }
@@ -201,6 +211,7 @@
       }
 	  
 	  function update_template(){
+		  tinymce.triggerSave();
 		  template = $("#select2-template-select-container").attr("title");
 		  org_data = $("#orginal_data").html();
 		  if(template != template_title){
@@ -213,7 +224,8 @@
   	              type: 'POST',
   	              success: function(data, status){
   					  $('#error_message').html();
-  					  $("#compose-message").html(data);
+					   editor = tinymce.get('id_content');
+					   editor.setContent(data);
   	              },
   	  			error: function (jqXHR, exception) {
   	  				console.log('error');
@@ -246,7 +258,9 @@
 	    });
 	  }
 	  
+	  
 	  function update_label_id(threadId){
+		  tinymce.triggerSave();
   			var fd = new FormData($('form')[0]);
 	  		var csrf = $('[name="csrfmiddlewaretoken"]').val();
 	        $.ajax({
@@ -255,7 +269,10 @@
 	              type: 'POST',
 	              success: function(data, status){
 					  labelsToAdd = data.split(",");
-					  modifyThread('me', threadId, labelsToAdd);
+					  if(labelsToAdd != ""){
+					  	 modifyThread('me', threadId, labelsToAdd);
+					  }
+					 
 	              },
 	  			error: function (jqXHR, exception) {
 	  				console.log('error');
