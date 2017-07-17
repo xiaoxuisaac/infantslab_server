@@ -43,8 +43,8 @@
  
         <input type="button" value="Send"  id="send-button"  style="display: inline-block;" class="btn btn-default"/>
         <input type="button" value="Sign In" id="authorize-button"  style="display: none;" class="btn btn-default"/>
-        <input type="button" value="Sign Out" id="signout-button"  style="display: inline-block;" class="btn btn-default"/>
-        <input type="button" value="Sign Out" id="success-close-button"  style="display: none;" class="btn btn-default"/>
+        <input type="button" value="Sign Out" id="signout-button"  style="display: none;" class="btn btn-default"/>
+        <input type="button" value="" id="success-close-button"  style="display: none;" class="btn btn-default"/>
     </form>
     <div id = "success_message" style="margin-top:10px; margin-bottom:10px; color: green;">
      </div>
@@ -120,7 +120,7 @@
       function updateSigninStatus(googleUser) {
         if (isSignedIn) {
           authorizeButton.style.display = 'none';
-          signoutButton.style.display = 'inline-block';
+          signoutButton.style.display = 'none';
           sendButton.style.display = 'inline-block';
         } else {
           authorizeButton.style.display = 'inline-block';
