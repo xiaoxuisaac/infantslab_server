@@ -105,6 +105,8 @@ def email_from_template(data_web, content_only = False):
     
     try: 
         data['researcher'] = data_web["researcher"]
+        if data['researcher'] == "":
+            data['researcher'] = "[Your Name]"
     except: 
         data['researcher'] = '[Your Name]'
             
