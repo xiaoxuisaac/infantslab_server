@@ -22,7 +22,6 @@ class Template(models.Model):
 class Email(models.Model):
     email=models.CharField(max_length=200, null = True, blank = True)
     subject=models.CharField(max_length=400, null = True, blank = True)
-#    content=models.TextField(max_length=10000, null = True, blank = True)
     content = tinymce_models.HTMLField(null = True)
     labels = models.ManyToManyField(Label,blank=True,related_name='emails')
     template = models.ForeignKey(Template,blank=True,null = True, related_name='emails')
